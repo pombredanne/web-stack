@@ -32,33 +32,32 @@ echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selec
 echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
 apt-get install -y oracle-java7-installer oracle-java7-set-default
 
-# Setup JBoss WildFly
+
+# Setup JBoss Application Server 7
 INSTALL_DIR=/opt
-WILDFLY_VERSION=8.0.0.Beta1
-WILDFLY_ARCHIVE_NAME=wildfly-$WILDFLY_VERSION.tar.gz 
-WILDFLY_DOWNLOAD_ADDRESS=http://download.jboss.org/wildfly/$WILDFLY_VERSION/$WILDFLY_ARCHIVE_NAME
-WILDFLY_FULL_DIR=$INSTALL_DIR/wildfly-$WILDFLY_VERSION
-WILDFLY_DIR=$INSTALL_DIR/wildfly
-WILDFLY_USER="wildfly"
-WILDFLY_STARTUP_TIMEOUT=240
+AS7_AS_FILENAME=jboss-as-7.1.1.Final
+AS7_AS_ARCHIVE_NAME=$AS7_AS_FILENAME.tar.gz 
+AS7_AS_DOWNLOAD_ADDRESS=http://download.jboss.org/jbossas/7.1/$AS7_AS_FILENAME/$AS7_AS_ARCHIVE_NAME
+AS7_AS_FULL_DIR=$INSTALL_DIR/$AS7_AS_FILENAME
+AS7_AS_DIR=$INSTALL_DIR/as7
+AS7_AS_USER="jboss"
+AS7_AS_STARTUP_TIMEOUT=240
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo "Installation..."
-wget $WILDFLY_DOWNLOAD_ADDRESS
-mkdir $WILDFLY_FULL_DIR
-tar -xzf $WILDFLY_ARCHIVE_NAME -C $INSTALL_DIR
-ln -s $WILDFLY_FULL_DIR/ $WILDFLY_DIR
-useradd -s /bin/bash $WILDFLY_USER
-chown -R $WILDFLY_USER:$WILDFLY_USER $WILDFLY_DIR
-chown -R $WILDFLY_USER:$WILDFLY_USER $WILDFLY_DIR/
-rm $WILDFLY_ARCHIVE_NAME
+wget $AS7_AS_DOWNLOAD_ADDRESS
+mkdir $AS7_AS_FULL_DIR
+tar -xzf $AS7_AS_ARCHIVE_NAME -C $INSTALL_DIR
+mv $AS7_AS_FULL_DIR $AS7_AS_DIR
+useradd -s /bin/bash $AS7_AS_USER
+chown -R $AS7_AS_USER:$AS7_AS_USER $AS7_AS_DIR
+chown -R $AS7_AS_USER:$AS7_AS_USER $AS7_AS_DIR/
+rm $AS7_AS_ARCHIVE_NAME
 
-echo "Configurating..."
-sed -i -e 's,<deployment-scanner path="deployments" relative-to="jboss.server.base.dir" scan-interval="5000"/>,<deployment-scanner path="deployments" relative-to="jboss.server.base.dir" scan-interval="5000" deployment-timeout="'$WILDFLY_STARTUP_TIMEOUT'"/>,g' $WILDFLY_DIR/standalone/configuration/standalone.xml
-sed -i -e 's,<virtual-server name="default-host" enable-welcome-root="true">,<virtual-server name="default-host" enable-welcome-root="false">,g' $WILDFLY_DIR/standalone/configuration/standalone.xml
-sed -i -e 's,<inet-address value="${jboss.bind.address:127.0.0.1}"/>,<any-address/>,g' $WILDFLY_DIR/standalone/configuration/standalone.xml
-#sed -i -e 's,<socket-binding name="ajp" port="8009"/>,<socket-binding name="ajp" port="28009"/>,g' $WILDFLY_DIR/standalone/configuration/standalone.xml
-#sed -i -e 's,<socket-binding name="http" port="8080"/>,<socket-binding name="http" port="28080"/>,g' $WILDFLY_DIR/standalone/configuration/standalone.xml
-#sed -i -e 's,<socket-binding name="https" port="8443"/>,<socket-binding name="https" port="28443"/>,g' $WILDFLY_DIR/standalone/configuration/standalone.xml
-#sed -i -e 's,<socket-binding name="osgi-http" interface="management" port="8090"/>,<socket-binding name="osgi-http" interface="management" port="28090"/>,g' $WILDFLY_DIR/standalone/configuration/standalone.xml
+# Overwrite default configuration files with our own
+echo "Configuration..."
+cp -R /root/* /
 
 echo "Done."
+

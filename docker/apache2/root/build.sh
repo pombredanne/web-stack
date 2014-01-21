@@ -24,4 +24,8 @@ echo 'PermitRootLogin  without-password' >> /etc/ssh/sshd_config
 
 # Setup Apache
 apt-get -y install apache2-mpm-worker libapache2-mod-jk
+useradd -s /bin/bash apache2
 
+# Overwrite default configuration files with our own
+echo "Configuration..."
+cp -R /root/* /

@@ -6,11 +6,11 @@ echo 'deb http://archive.ubuntu.com/ubuntu precise main universe' > /etc/apt/sou
 apt-get update
 
 # Setup Essentials
-apt-get install -y wget vim python-setuptools
+apt-get install -y wget vim python-setuptools aptitude
 
 # Setup Supervisor
 easy_install supervisor
-mv /root/supervisord.conf /etc
+cp /root/etc/supervisord.conf /etc
 
 # Setup SSH Server
 apt-get install -y openssh-server
@@ -22,12 +22,7 @@ chown root:root -R /root
 echo 'AuthorizedKeysFile  /root/.ssh/authorized_keys' >> /etc/ssh/sshd_config
 echo 'PermitRootLogin  without-password' >> /etc/ssh/sshd_config
 
-# Setup SSH Server
-apt-get install -y openssh-server
-mkdir -p /var/run/sshd
-mkdir -p /root/.ssh
-cp id_rsa.pub .ssh/authorized_keys
-chmod 600 .ssh/authorized_keys
-chown root:root -R /root
-echo 'AuthorizedKeysFile /root/.ssh/authorized_keys' >> /etc/ssh/sshd_config
-echo 'PermitRootLogin without-password' >> /etc/ssh/sshd_config
+# Install MySQL
+#debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password password ""'
+#debconf-set-selections <<< 'mysql-server-5.5 mysql-server/root_password_again password ""'
+apt-get -y install mysql-server

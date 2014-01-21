@@ -17,9 +17,13 @@ Vagrant::Config.run do |config|
   #config.vm.forward_port 5000, 5010
   config.vm.forward_port 5555, 5555
   config.vm.forward_port 1234, 1234
-  config.vm.forward_port 8080, 8080
   config.vm.forward_port 5432, 5432
-  config.vm.forward_port 7080, 7080
+  config.vm.forward_port 3306, 3306
+  config.vm.forward_port 8080, 8080
+  config.vm.forward_port 10000, 10000
+  #config.vm.forward_port 8009, 8009
+  #config.vm.forward_port 9999, 9999
+
 
   # Forward SSH ports into docker containers
   (2200..2210).each do |port|

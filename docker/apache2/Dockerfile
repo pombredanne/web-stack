@@ -1,6 +1,7 @@
 ### Apache
 FROM    ubuntu:12.04
 
+ADD     common/ /root/
 ADD     root/ /root/
 RUN     /bin/bash /root/build.sh
 
